@@ -1,6 +1,6 @@
 # WORK IN PROGRESS
 
-# Dotfiles IMporter
+# Dotfiles IMporter (DIM)
 
 DIM is a simple dotfiles management tool.
 
