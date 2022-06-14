@@ -80,7 +80,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "dimport"
+name = "dim"
 version = "0.1.0"
 dependencies = [
  "clap",

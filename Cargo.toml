@@ -1,6 +1,8 @@
 [package]
 name = "dim"
-author = "lyr-7d1h <lyr-7d1h@pm.me>"
+authors = [
+  "lyr-7d1h <lyr-7d1h@pm.me>"
+]
 version = "0.1.0"
 edition = "2021"
 
