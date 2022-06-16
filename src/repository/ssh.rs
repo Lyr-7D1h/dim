@@ -1,9 +1,14 @@
-use std::{error::Error, fs::read_dir, net::TcpStream, path::PathBuf};
+use std::{
+    error::Error,
+    fs::read_dir,
+    net::TcpStream,
+    path::{Path, PathBuf},
+};
 
 use git2::Cred;
 use ssh2::Session;
 
-use crate::HOME_DIR;
+use crate::dirs::home_dir;
 
 struct GitUrl {
     hostname: String,
@@ -13,12 +18,13 @@ struct GitUrl {
 impl TryFrom<String> for GitUrl {
     type Error = Box<dyn Error>;
 
-    fn try_from(value: String) -> Result<Self, Self::Error> {
-        let mut destination = value.replace("ssh://", "");
+    fn try_from(mut value: String) -> Result<Self, Self::Error> {
+        value = value.replace("ssh://", "");
 
         let mut username = "root";
+        let mut destination = value.clone();
 
-        let mut parts = destination.split("@");
+        let mut parts = value.split("@");
 
         if parts.clone().count() >= 2 {
             username = parts.next().unwrap();
@@ -33,14 +39,15 @@ impl TryFrom<String> for GitUrl {
 }
 
 fn get_shh_key(session: &Session, user: &str, hostname: &str) -> Result<PathBuf, Box<dyn Error>> {
-    let ssh_path = HOME_DIR.join(".ssh");
+    let ssh_path = Path::new("/home/{}");
+    let home_path = home_dir();
 
     for entry in read_dir(ssh_path)? {
         let entry = entry?;
         if let Some(publickey) = entry.file_name().to_str() {
             if publickey.starts_with("id_") && publickey.ends_with(".pub") {
-                let privatekey = HOME_DIR.join(".ssh").join(publickey.replace(".pub", ""));
-                let publickey = HOME_DIR.join(".ssh").join(publickey);
+                let privatekey = home_path.join(".ssh").join(publickey.replace(".pub", ""));
+                let publickey = home_path.join(".ssh").join(publickey);
 
                 if privatekey.exists() && publickey.exists() {
                     if let Ok(()) = session.userauth_hostbased_file(

@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use dimport::{setup, sync};
+use dim::Dim;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -10,16 +10,18 @@ struct Args {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    Init { url: String },
+    Setup { url: String },
     Sync,
 }
 
 fn main() {
     let args = Args::parse();
 
+    let dim = Dim::init().unwrap();
+
     println!("{args:?}");
     match args.command {
-        Commands::Init { url } => setup(&url).unwrap(),
-        Commands::Sync => sync().unwrap(),
+        Commands::Setup { url } => dim.setup(url).unwrap(),
+        Commands::Sync => dim.sync().unwrap(),
     };
 }

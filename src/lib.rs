@@ -1,13 +1,32 @@
-mod setup;
-use std::path::PathBuf;
+use std::{error::Error, io};
 
-use dirs::{config_dir, home_dir};
-pub use setup::setup;
+use config::Config;
 
-mod sync;
-pub use sync::sync;
+pub mod config;
+pub mod repository;
 
-mod credentials;
+mod dirs;
 
-static HOME_DIR: PathBuf = home_dir().unwrap();
-static CONFIG_DIR: PathBuf = config_dir().unwrap().join("dimport");
+pub struct Dim {
+    config: Config,
+}
+
+impl Dim {
+    /// Initialize configuration files
+    pub fn init() -> io::Result<Dim> {
+        let config = Config::init()?;
+        Ok(Dim { config })
+    }
+
+    pub fn sync(self) -> Result<(), Box<dyn Error>> {
+        // TODO check if all files are complete
+        // TODO see if there are diff with remote
+        // TODO make remote branch for current changes
+        todo!()
+    }
+
+    pub fn setup(self, git_url: String) -> Result<(), Box<dyn Error>> {
+        // TODO link all files from .repository to actual repository
+        todo!()
+    }
+}
